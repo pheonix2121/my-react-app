@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import MoviesList from './components/MoviesList';
-import './App.css';
+import React, { useState, useEffect, useCallback } from "react";
+import MoviesList from "./components/MoviesList";
+import AddNewMovie from "./components/AddMovie";
+import "./App.css";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -15,21 +16,19 @@ function App() {
     setIsRetrying(false);
 
     try {
-      const response = await fetch('https://swapi.dev/api/film/');
-
+      const response = await fetch("https://swapi.dev/api/films/");
       if (!response.ok) {
-        throw new Error('Something went wrong....Retrying');
+        throw new Error("Something went wrong....Retrying");
       }
 
       const data = await response.json();
 
-      const transformedData = data.results.map((movieData) => {
-        return {
-          id: movieData.episode_id,
-          title: movieData.title,
-          // Additional movie data if needed
-        };
-      });
+      const transformedData = data.results.map((movieData) => ({
+        id: movieData.episode_id,
+        title: movieData.title,
+        openingText: movieData.opening_crawl,
+        releaseDate: movieData.release_date,
+      }));
 
       setMovies(transformedData);
     } catch (error) {
@@ -44,21 +43,29 @@ function App() {
   }, [isRetrying]);
 
   useEffect(() => {
+    fetchMoviesHandler();
+  }, [fetchMoviesHandler]);
+
+  useEffect(() => {
     if (retryCount > 0) {
       const timer = setTimeout(fetchMoviesHandler, 5000);
       return () => clearTimeout(timer);
     }
   }, [retryCount, fetchMoviesHandler]);
 
-  function handleRetryClick() {
+  const handleRetryClick = useCallback(() => {
     setRetryCount(1);
     setIsRetrying(true);
-  }
+  }, []);
 
-  function handleCancelClick() {
+  const handleCancelClick = useCallback(() => {
     setRetryCount(0);
     setIsRetrying(false);
-  }
+  }, []);
+
+  const addMovieHandler = (movieData) => {
+    setMovies((prevMovies) => [...prevMovies, movieData]);
+  };
 
   let content = <p>No movies found.</p>;
   if (movies.length > 0) {
@@ -79,6 +86,7 @@ function App() {
 
   return (
     <React.Fragment>
+      <AddNewMovie onAddMovie={addMovieHandler} />
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
@@ -88,4 +96,3 @@ function App() {
 }
 
 export default App;
-
