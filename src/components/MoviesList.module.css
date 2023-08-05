@@ -1,5 +1,8 @@
-.movies-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+body {
+  margin: 0;
+  font-size: 1rem;
+}
+.movie button {
+  color: rgb(252, 249, 249);
+  background-color: darkred;
+}

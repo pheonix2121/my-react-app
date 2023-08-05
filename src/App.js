@@ -10,6 +10,7 @@ function App() {
   const [retryCount, setRetryCount] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
 
+
   const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -87,10 +88,7 @@ function App() {
   return (
     <React.Fragment>
       <AddNewMovie onAddMovie={addMovieHandler} />
-      <section>
-        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
-      </section>
-      <section>{content}</section>
+      {content}
     </React.Fragment>
   );
 }
